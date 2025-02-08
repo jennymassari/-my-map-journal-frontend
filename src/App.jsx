@@ -22,6 +22,7 @@ const convertFromApi = (apiData) => {
 function App() {
   const [countryData, setCountryData] = useState([]);
   const [selectedCountryName, setSelectedCountryName] = useState(null);
+  const [selectedCountryId, setSelectedCountryId] = useState(null);
   const [experienceData, setExperienceData] = useState([]);
 
   // Fetching Country Data
@@ -39,6 +40,7 @@ function App() {
     if (selectedCountryName) {
       const country = countryData.find((country) => country.name === selectedCountryName);
       if (country) {
+        setSelectedCountryId(country.id);
         axios.get(`${kBaseURL}/country/${country.id}/experiences`)
           .then((response) => {
             console.log('Experiences', response.data.experiences);
@@ -51,35 +53,21 @@ function App() {
     }
   }, [selectedCountryName, countryData]);
 
-  // Update the country status based on the user selection
-  const handleSelectionUpdate = (countryName, status) => {
+  // Add or Update Country
+  const handleAddOrUpdateCountry = (countryName, status) => {
     const country = countryData.find((country) => country.name === countryName);
-    if (country) {
-      const payload = {
-        borned: status === "born",
-        visited: status === "visited",
-        want_to_visit: status === "visit",
-      };
-      console.log("Payload:", payload);
-      axios.patch(`${kBaseURL}/country/${country.id}`, payload)
-        .then(() => {
-          const updatedCountries = countryData.map((c) =>
-            c.id === country.id ? { ...c, ...payload } : c
-          );
-          setCountryData(updatedCountries);
-        })
-        .catch((error) => console.error("Error updating country status:", error));
-    } else {
-      const payload = {
-        name: countryName,
-        lat: 0, 
-        long: 0, 
-        borned: status === "born",
-        visited: status === "visited",
-        want_to_visit: status === "visit",
-      };
+    const payload = {
+      name: countryName,
+      lat: 0,
+      long: 0,
+      borned: status === "born",
+      visited: status === "visited",
+      want_to_visit: status === "visit",
+    };
 
+    if (!country) {
       // Add a new country if it does not exist
+      console.log('Country not found in database');
       axios.post(`${kBaseURL}/country`, payload)
         .then((response) => {
           console.log("New Country Added:", response.data);
@@ -97,23 +85,58 @@ function App() {
             console.error("Error message:", error.message);
           }
         });
+    } else {
+      console.log("Country already exists:", country);
+    }
+  };
+
+  // Update Country Status
+  const handleUpdateCountryStatus = (countryName, status) => {
+    const country = countryData.find((country) => country.name === countryName);
+    if (country) {
+      const payload = {
+        borned: status === "born",
+        visited: status === "visited",
+        want_to_visit: status === "visit",
+      };
+      console.log("Payload:", payload);
+      axios.patch(`${kBaseURL}/country/${country.id}`, payload)
+        .then(() => {
+          const updatedCountries = countryData.map((c) =>
+            c.id === country.id ? { ...c, ...payload } : c
+          );
+          setCountryData(updatedCountries);
+        })
+        .catch((error) => console.error("Error updating country status:", error));
+    } else {
+      console.error("Country not found:", countryName);
     }
   };
 
   // Add a new experience
-  const handleAddExperience = (experience) => {
-    const country = countryData.find((country) => country.name === selectedCountryName);
-    if (country) {
-      axios.post(`${kBaseURL}/country/${country.id}/experiences`, experience)
-        .then((response) => {
-          const newExperience = convertFromApi(response.data);
-          console.log('New Experience Added:', newExperience);
-          setExperienceData((prevData) => [...prevData, newExperience]);
-        })
-        .catch((error) => {
-          console.error('Error adding experience:', error);
-        });
-    }
+  const handleAddExperience = (experienceForm) => {
+    // Create a new FormData instance
+    console.log('Experience Form:', experienceForm);
+
+    experienceForm.set("country_id", selectedCountryId);
+  
+    // Log to check the content of the FormData object
+    console.log('FormData:', experienceForm);
+  
+    // Send the POST request with the FormData
+    axios.post(`${kBaseURL}/country/${selectedCountryId}/experiences`, experienceForm, {
+      headers: {
+        'Content-Type': 'multipart/form-data'  // This tells axios to send as multipart form data
+      }
+    })
+    .then((response) => {
+      const newExperience = convertFromApi(response.data);
+      console.log('New Experience Added:', newExperience);
+      setExperienceData((prevData) => [...prevData, newExperience]);
+    })
+    .catch((error) => {
+      console.error('Error adding experience:', error);
+    });
   };
 
   const handleDeleteExperience = (id) => {
@@ -157,7 +180,7 @@ function App() {
               element={
                 <Country
                   countries={countryData}
-                  onSelectionUpdate={handleSelectionUpdate}
+                  onSelectionUpdate={handleAddOrUpdateCountry}
                   onSelectCountry={handleSelectCountry}
                 />
               }
@@ -175,7 +198,7 @@ function App() {
               }
             />
             <Route path="/new-country" element={<NewCountryForm onAddCountry={handleAddCountry} />} />
-            <Route path="/new-experience" element={<NewExperienceForm handleSubmit={handleAddExperience} />} />
+            <Route path="/new-experience" element={<NewExperienceForm handleSubmit={handleAddExperience} selectedCountryName={selectedCountryName} selectedCountryId={selectedCountryId} />} />
           </Routes>
         </Router>
       </main>
@@ -184,4 +207,3 @@ function App() {
 }
 
 export default App;
-

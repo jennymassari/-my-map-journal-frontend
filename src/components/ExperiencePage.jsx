@@ -1,21 +1,36 @@
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import NewExperienceForm from './NewExperienceForm';
-import Experience from './Experience';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from "react";
+import { useParams, useLocation } from "react-router-dom";
+import NewExperienceForm from "./NewExperienceForm";
+import Experience from "./Experience";
+import PropTypes from "prop-types";
 
-const ExperiencePage = ({ selectedCountryName, setSelectedCountryName, experienceData, handleAddExperience, handleDeleteExperience }) => {
-  const { country: countryParam } = useParams();
+const ExperiencePage = ({
+  setSelectedCountryName,
+  experienceData,
+  handleAddExperience,
+  handleDeleteExperience,
+}) => {
+  // Extract countryId from the URL using useParams
+  const { countryId } = useParams();
+
+  // Extract the state passed from navigate (contains countryName and status)
+  const location = useLocation();
+  const { countryName, status } = location.state || {};
+
+  const [selectedCountry, setSelectedCountry] = useState(countryName);
 
   useEffect(() => {
-    if (!selectedCountryName) {
-      setSelectedCountryName(countryParam);
+    if (countryName && !selectedCountry) {
+      setSelectedCountry(countryName);
     }
-  }, [countryParam, selectedCountryName, setSelectedCountryName]);
+  }, [countryName, selectedCountry]);
+
+  // You can use countryId to fetch data specific to the country (if needed)
 
   return (
     <div>
-      <h1>Experience in {selectedCountryName || countryParam}</h1>
+      <h1>Experience in {selectedCountry || "Country"}</h1>
+
       <NewExperienceForm handleSubmit={handleAddExperience} />
       <div className="experience-items-container">
         {experienceData.map((experience) => (
@@ -34,7 +49,6 @@ const ExperiencePage = ({ selectedCountryName, setSelectedCountryName, experienc
 };
 
 ExperiencePage.propTypes = {
-  selectedCountryName: PropTypes.string,
   setSelectedCountryName: PropTypes.func.isRequired,
   experienceData: PropTypes.arrayOf(
     PropTypes.shape({
@@ -49,3 +63,5 @@ ExperiencePage.propTypes = {
 };
 
 export default ExperiencePage;
+
+
