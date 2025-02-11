@@ -33,8 +33,8 @@ const NewExperienceForm = ({ handleSubmit, selectedCountryName, selectedCountryI
         formData.append("image", experienceForm.image);
       }
 
-      formData.append("country_id", selectedCountryId);  // Ensure the selected country ID is included in the form submission
-      handleSubmit(formData, selectedCountryName);  // Call the handler function
+      formData.append("country_id", selectedCountryId);  
+      handleSubmit(formData, selectedCountryName);  
       setExperienceForm({ title: "", description: "", image: null });
     }
   };

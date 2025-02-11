@@ -3,6 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import NewExperienceForm from "./NewExperienceForm";
 import Experience from "./Experience";
 import PropTypes from "prop-types";
+import './ExperiencePage.css';
 
 const ExperiencePage = ({
   setSelectedCountryName,
@@ -32,7 +33,7 @@ const ExperiencePage = ({
       <h1>Experience in {selectedCountry || "Country"}</h1>
 
       <NewExperienceForm handleSubmit={handleAddExperience} />
-      <div className="experience-items-container">
+      <div className="experience-items-container ">
         {experienceData.map((experience) => (
           <Experience
             key={experience.id}

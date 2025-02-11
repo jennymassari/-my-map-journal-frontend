@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import axios from "axios";
-import Country from "./components/Country";
+import Map from "./components/Map";
 import ExperiencePage from "./components/ExperiencePage";
-import NewCountryForm from "./components/NewCountryForm";
 import NewExperienceForm from "./components/NewExperienceForm";
+import './index.css';
 
 const kBaseURL = "https://map-journal-620a4d04c266.herokuapp.com";
 
@@ -24,8 +24,9 @@ function App() {
   const [selectedCountryName, setSelectedCountryName] = useState(null);
   const [selectedCountryId, setSelectedCountryId] = useState(null);
   const [experienceData, setExperienceData] = useState([]);
+  const [countryStatuses, setCountryStatuses] = useState({}); 
 
-  // Fetching Country Data
+    // Fetching Country Data
   useEffect(() => {
     axios.get(`${kBaseURL}/country`)
       .then((response) => {
@@ -53,7 +54,18 @@ function App() {
     }
   }, [selectedCountryName, countryData]);
 
-  // Add or Update Country
+  const handleSelectCountry = (countryName) => {
+    setSelectedCountryName(countryName);
+  };
+
+  const handleStatusChange = (countryName, status) => {
+    // Update the countryStatuses state, setting the status for the selected country.
+    setCountryStatuses((prevStatuses) => ({
+      ...prevStatuses,
+      [countryName]: status, 
+    }));
+  };
+
   const handleAddOrUpdateCountry = (countryName, status) => {
     const country = countryData.find((country) => country.name === countryName);
     const payload = {
@@ -67,53 +79,19 @@ function App() {
 
     if (!country) {
       // Add a new country if it does not exist
-      console.log('Country not found in database');
       axios.post(`${kBaseURL}/country`, payload)
         .then((response) => {
-          console.log("New Country Added:", response.data);
           setCountryData((prevData) => [...prevData, response.data.country]);
         })
         .catch((error) => {
           console.error("Error adding country:", error);
-          if (error.response) {
-            console.error("Response data:", error.response.data);
-            console.error("Response status:", error.response.status);
-            console.error("Response headers:", error.response.headers);
-          } else if (error.request) {
-            console.error("Request data:", error.request);
-          } else {
-            console.error("Error message:", error.message);
-          }
         });
     } else {
       console.log("Country already exists:", country);
     }
   };
 
-  // Update Country Status
-  const handleUpdateCountryStatus = (countryName, status) => {
-    const country = countryData.find((country) => country.name === countryName);
-    if (country) {
-      const payload = {
-        borned: status === "born",
-        visited: status === "visited",
-        want_to_visit: status === "visit",
-      };
-      console.log("Payload:", payload);
-      axios.patch(`${kBaseURL}/country/${country.id}`, payload)
-        .then(() => {
-          const updatedCountries = countryData.map((c) =>
-            c.id === country.id ? { ...c, ...payload } : c
-          );
-          setCountryData(updatedCountries);
-        })
-        .catch((error) => console.error("Error updating country status:", error));
-    } else {
-      console.error("Country not found:", countryName);
-    }
-  };
-
-  // Add a new experience
+  //Add a new experience
   const handleAddExperience = (experienceForm) => {
     // Create a new FormData instance
     console.log('Experience Form:', experienceForm);
@@ -126,7 +104,7 @@ function App() {
     // Send the POST request with the FormData
     axios.post(`${kBaseURL}/country/${selectedCountryId}/experiences`, experienceForm, {
       headers: {
-        'Content-Type': 'multipart/form-data'  // This tells axios to send as multipart form data
+        'Content-Type': 'multipart/form-data'  
       }
     })
     .then((response) => {
@@ -150,26 +128,10 @@ function App() {
       });
   };
 
-  // Add a new country
-  const handleAddCountry = (country) => {
-    axios.post(`${kBaseURL}/country`, country)
-      .then((response) => {
-        console.log('New Country:', response.data);
-        setCountryData((prevData) => [...prevData, response.data.country]);
-      })
-      .catch((error) => {
-        console.error('Error adding country:', error);
-      });
-  };
-
-  // Update the selected country
-  const handleSelectCountry = (countryName) => {
-    setSelectedCountryName(countryName);
-  };
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className="App second-page-background">
+      <header className="App-header" >
         <h1>My Map Journal</h1>
       </header>
       <main>
@@ -178,27 +140,29 @@ function App() {
             <Route
               path="/"
               element={
-                <Country
+                <Map
                   countries={countryData}
-                  onSelectionUpdate={handleAddOrUpdateCountry}
+                  selectedCountry={selectedCountryName}
+                  countryStatuses={countryStatuses}
+                  onStatusChange={handleStatusChange}
                   onSelectCountry={handleSelectCountry}
+                  onSelectionUpdate={handleAddOrUpdateCountry}
                 />
               }
             />
-            <Route
+           <Route
               path="/experience/:country"
               element={
                 <ExperiencePage
-                  selectedCountryName={selectedCountryName}
+                   selectedCountryName={selectedCountryName}
                   setSelectedCountryName={setSelectedCountryName}
-                  experienceData={experienceData}
-                  handleAddExperience={handleAddExperience}
+                   experienceData={experienceData}
+                   handleAddExperience={handleAddExperience}
                   handleDeleteExperience={handleDeleteExperience}
                 />
-              }
-            />
-            <Route path="/new-country" element={<NewCountryForm onAddCountry={handleAddCountry} />} />
-            <Route path="/new-experience" element={<NewExperienceForm handleSubmit={handleAddExperience} selectedCountryName={selectedCountryName} selectedCountryId={selectedCountryId} />} />
+               }
+             />
+            <Route path="/new-experience" element={<NewExperienceForm handleSubmit={handleAddOrUpdateCountry} selectedCountryName={selectedCountryName} selectedCountryId={selectedCountryId} />} />
           </Routes>
         </Router>
       </main>
@@ -207,3 +171,4 @@ function App() {
 }
 
 export default App;
+

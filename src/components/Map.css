@@ -1,0 +1,34 @@
+.legend {
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    z-index: 1000;
+  }
+  
+  .legend h4 {
+    margin: 0 0 10px;
+  }
+  
+  .legend div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .legend span {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+
+ 
+  
+  .map-border {
+    border: 8px solid #003366; 
+    border-radius: 8px; 
+  }

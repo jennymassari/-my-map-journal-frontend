@@ -1,0 +1,78 @@
+.experience-item {
+  border: 1px solid #e6e0df; 
+  border-radius: 8px;
+  padding: 16px;
+  margin: 8px;
+  width: auto;
+  max-width: 300px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  flex-grow: 0;
+  flex-shrink: 0;
+  align-self: flex-start;
+
+  /* Adding Polaroid look */
+  transform: rotate(-2deg); 
+  position: relative; 
+  overflow: hidden; 
+}
+
+/* Optional: Add a caption area at the bottom (like a Polaroid) */
+.experience-item::after {
+  content: " "; 
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30px; 
+  background-color: #fff;
+  border-top: 1px solid #e6e0df; 
+  text-align: center;
+  padding: 5px;
+  font-style: italic;
+  color: #333; 
+  font-size: 14px;
+}
+
+button:hover {
+  border-color: #e67e22;
+  color: #ffffff;
+  background-color: #e67e22;
+}
+
+.experience-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.experience-description {
+  margin: 8px 0;
+}
+
+.experience-image {
+  max-width: 100%;
+  height: auto;
+  margin: 8px 0;
+}
+
+.experience-buttons {
+  margin-top: 8px;
+  z-index: 1; 
+  position: relative; 
+}
+
+.delete-button {
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: #e67e22;
+}
+

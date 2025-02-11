@@ -4,6 +4,7 @@ html, body, #root {
   margin: 0;
   padding: 0;
 }
+
 body {
   margin: 0;
   display: flex;
@@ -12,7 +13,7 @@ body {
   justify-content: flex-start;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #f4e9f3;
+  background-color: beige; 
   color: #242424;
   font-family: Arial, sans-serif;
 }
@@ -21,7 +22,7 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
   margin-bottom: 10px;
-  color: #2C3E50;
+  color: #800020;
   text-align: center;
   
 }
@@ -30,7 +31,7 @@ h2 {
   font-size: 2em;
   margin-top: 10px;
   margin-bottom: 20px;
-  color: #e67e22;
+  color: #003366;
 }
 
 a {
@@ -40,8 +41,14 @@ a {
 }
 a:hover {
   color: #535bf2;
+  background-color: #e67e22;
 }
 
+button:hover {
+  border-color:#e67e22;
+  color: #ffffff;
+  background-color: #e67e22;
+}
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -52,12 +59,10 @@ button {
   background-color: #1a1a1a;
   color: rgba(255, 255, 255, 0.87);
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: background-color 0.25s, border-color 0.25s;
   margin: 5px;
 }
-button:hover {
-  border-color: #646cff;
-}
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -71,9 +76,9 @@ button:focus-visible {
 }
 
 .map-container {
-  width: 95%; /* Increase width */
-  max-width: 1400px; /* Increase max-width */
-  height: 600px; /* Increase height */
+  width: 95%;
+  max-width: 1400px; 
+  height: 600px; 
   margin-bottom: 20px;
 }
 
@@ -86,3 +91,21 @@ button:focus-visible {
 .status-buttons button {
   margin: 0 10px;
 }
+
+.status-buttons button:hover {
+  background-color: #e67e22; 
+  border-color: #e67e22; 
+  color: #ffffff;
+}
+
+.additional-space {
+  margin-top: 20px; 
+}
+
+.second-page-background {
+  background-image: url('./assets/beige.png'); 
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh; 
+}
+
